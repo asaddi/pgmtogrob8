@@ -1,0 +1,117 @@
+pgmtogrob8 - read a portable graymap and output an 8-shade GROB
+
+Copyright (C) 1995 by Allan Saddi (asaddi@pasteur.EECS.Berkeley.EDU)
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided
+that the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.  This software is provided "as is" without express or
+implied warranty.
+
+Consider this a beta release! Just because it works for me doesn't mean
+it'll work for you. Use at your own risk!
+
+Introduction:
+
+I first became interested in multi-shade GROBs when a friend showed me
+a multi-shaded picture of Claudia Schiffer. :) Since then, I've rummaged
+through the net for multi-shade GROB viewers and converters. Some only
+displayed 4-shade GROBs, but allowed GROBs to be larger than the display.
+Others displayed n-shade GROBs, but limited the GROB to the size of the
+display. And GROB converters only came in the MS-DOS flavor.
+
+So here is my contribution, a portable gray GROB converter. This program is
+based on netpbm, a nifty, freely-distributable, and most importantly,
+portable set of image processing tools.
+
+Familiarity with netpbm and the HP48 is assumed.
+
+Relevant files:
+
+README		- This file
+Makefile	- Input for make on building pgmtogrob8
+pgmtogrob8.c	- Main source
+pgmtogrob8.1	- man page
+view8		- 8-shade GROB viewer for HP48G/S(?) (binary)
+test/skuld.pgm	- Sample PGM file (from the anime, _Ah! My Goddess_)
+test/skuld.grob	- Sample 8-shade GROB produced from skuld.pgm
+
+Before you compile...
+
+You'll need the netpbm distribution to compile this program. Specifically,
+you'll need to have libpbm.a and libpgm.a compiled and you'll need access
+to the pgm/pbm headers. I used the March 1, 1994 version (the latest thus
+far), which should be available just about anywhere.
+
+Compiling:
+
+First edit the Makefile to suit your system. If your system has gcc, the
+only things you'll most likely have to edit are the include and library
+directories for netpbm. For example, if you have the standard netpbm
+distribution tree in your home directory, you would edit INCLUDEDIR and
+LIBDIR to look like the following:
+
+INCLUDEDIR = -I~/netpbm -I~/netpbm/pbm -I~/netpbm/pgm
+LIBDIR = -L~/netpbm/pbm -L~/netpbm/pgm
+
+Once the Makefile is done, just run make to build the program.
+After the program is built, type "make test" to verify that it works.
+
+Usage:
+
+Usage is fairly simple. pgmtogrob8 takes one argument, the name of the
+pgm file. If left unspecified, pgmtogrob8 will read the pgm file from stdin.
+The resultant GROB file is always written to stdout.
+
+For example, the following converts the file foo.gif into an 8-shade GROB
+131 pixels wide and however many pixels high (scaled to preserve aspect
+ratio):
+
+giftopnm foo.gif | ppmtopgm | pnmscale -width 131 | pgmtogrob8 >foo.grob
+
+view8 usage:
+
+view8 is an 8-shade GROB viewer I wrote using SysRPL and Saturn assembly.
+Since I only have an HP48GX (revision R), I don't know if view8 works on
+the HP48S. Nonetheless, I'm fairly new to SysRPL and Saturn assembly, so
+whether you have an HP48G(X) or an HP48S(X), back up your calculator!
+
+To use view8, just put the 8-shade GROB on the stack and run view8.
+
+While viewing the GROB, the following keys are active:
+
+Left/Right arrows - Scrolls the GROB left and right (if width > 131 pixels)
+Up/Down arrows - Scrolls the GROB up and down (if height > 64 pixels)
+Enter - Quits view8
+
+Bugs/Notes:
+
+Since fooling with HP48 binary data deals a lot with byte/nibble/bit ordering,
+I'm not sure how pgmtogrob8 reacts to different endians. pgmtogrob8 has only
+been tested on big-endian machines.
+
+Being based off libpgm, pgmtogrob8 will most likely also read pbm (black &
+white) files. Though if you're going to convert a black & white file, you're
+better off using a normal converter, as pgmtogrob8 will still write out an
+8-shade GROB (and thus it will be three times its normal size).
+
+I don't know how pgmtogrob8 or view8 will react to super-huge GROBs. Use
+common sense.
+
+pgmtogrob8 was developed using gcc 2.6.3 on an HP-UX workstation and an
+Amiga. (pgmtogrob8 was based on ilbmtogrob8, an Amiga-based program which
+will be made available if demand warrants).
+
+view8 was developed using HPAsm 3.10e (an Amiga-based Saturn assembler).
+Writing SysRPL in assembly is a little annoying, and I've had no luck
+porting over Ramos' RPL++.
+
+Please contact me if you find any bugs.
+
+To Do:
+
+- A generic pgmtogrob program, which handles simple pbm's and not-so-simple
+  pgm's. Support for any number of shades.
+- Dithering down to n shades (as opposed to linear scaling)
+- An enhanced viewing program which supports above features
